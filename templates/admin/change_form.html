@@ -1,0 +1,277 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Premium Edit Form UI */
+    #content-main {
+        width: 100% !important;
+    }
+    
+    form {
+        background: rgba(11, 15, 25, 0.4) !important;
+        border: 1px solid #1e293b !important;
+        border-radius: 16px !important;
+        padding: 30px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 20px !important;
+    }
+    
+    fieldset.module {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    fieldset.module h2 {
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+        color: #ffffff !important;
+        border-bottom: 1px solid #1e293b !important;
+        padding-bottom: 12px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    /* Form row styling */
+    .form-row {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03) !important;
+        padding: 20px 0 !important;
+        display: grid !important;
+        grid-template-columns: 200px 1fr !important;
+        gap: 20px !important;
+        align-items: start !important;
+    }
+    
+    .form-row:last-child {
+        border-bottom: none !important;
+    }
+    
+    @media (max-width: 768px) {
+        .form-row {
+            grid-template-columns: 1fr !important;
+            gap: 8px !important;
+            padding: 15px 0 !important;
+        }
+    }
+    
+    .form-row label {
+        color: #ffffff !important;
+        font-weight: 500 !important;
+        font-size: 0.95rem !important;
+        padding-top: 10px !important;
+        display: inline-block !important;
+    }
+    
+    /* Inputs styling */
+    .form-row input[type=text], 
+    .form-row input[type=password], 
+    .form-row input[type=email], 
+    .form-row input[type=number], 
+    .form-row select, 
+    .form-row textarea {
+        width: 100% !important;
+        max-width: 600px !important;
+        box-sizing: border-box !important;
+        background: rgba(2, 6, 23, 0.8) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 8px !important;
+        padding: 10px 14px !important;
+        color: #ffffff !important;
+        font-family: inherit !important;
+        font-size: 0.95rem !important;
+    }
+    
+    .form-row input[type=text]:focus, 
+    .form-row input[type=password]:focus, 
+    .form-row input[type=email]:focus, 
+    .form-row input[type=number]:focus, 
+    .form-row select:focus, 
+    .form-row textarea:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+        outline: none !important;
+    }
+    
+    /* Help text & error rows */
+    .help, .help-block {
+        font-size: 0.8rem !important;
+        color: var(--body-quiet-color) !important;
+        margin-top: 6px !important;
+        display: block !important;
+    }
+    
+    .errorlist {
+        margin: 0 0 8px 0 !important;
+        padding: 0 !important;
+        list-style: none !important;
+        color: #fca5a5 !important;
+        font-size: 0.85rem !important;
+        font-weight: 500 !important;
+    }
+    
+    .errorlist li {
+        margin-bottom: 4px !important;
+    }
+    
+    /* File input override */
+    .form-row input[type=file] {
+        color: var(--body-fg) !important;
+        font-size: 0.9rem !important;
+    }
+    
+    /* Inline elements / JSON components */
+    .inline-group {
+        background: rgba(255, 255, 255, 0.01) !important;
+        border: 1px solid #1e293b !important;
+        border-radius: 12px !important;
+        padding: 20px !important;
+        margin-top: 20px !important;
+    }
+    
+    .inline-group h2 {
+        border-bottom: 1px solid #1e293b !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 15px !important;
+        font-size: 1.1rem !important;
+        color: #ffffff !important;
+    }
+    
+    /* Form Actions/Buttons Bar */
+    .submit-row {
+        background: rgba(11, 15, 25, 0.8) !important;
+        border: 1px solid #1e293b !important;
+        border-radius: 12px !important;
+        padding: 16px 24px !important;
+        margin-top: 25px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+        justify-content: flex-end !important;
+        align-items: center !important;
+    }
+    
+    .submit-row input[type=submit], .submit-row a.deletelink {
+        margin: 0 !important;
+        height: auto !important;
+        line-height: normal !important;
+    }
+    
+    .submit-row a.deletelink {
+        background: rgba(239, 68, 68, 0.15) !important;
+        border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        color: #fca5a5 !important;
+        padding: 10px 20px !important;
+        border-radius: 8px !important;
+        text-decoration: none !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .submit-row a.deletelink:hover {
+        background: rgba(239, 68, 68, 0.3) !important;
+        color: #ffffff !important;
+        border-color: rgba(239, 68, 68, 0.4) !important;
+    }
+    
+    /* Header info block */
+    .object-tools {
+        margin: 0 0 20px 0 !important;
+        padding: 0 !important;
+        display: flex !important;
+        justify-content: flex-end !important;
+        list-style: none !important;
+    }
+    
+    .object-tools a {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: var(--body-fg) !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        text-decoration: none !important;
+        font-weight: 500 !important;
+        font-size: 0.85rem !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    .object-tools a:hover {
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: #ffffff !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  {% block object-tools %}
+  {% if change %}{% if not is_popup %}
+    <ul class="object-tools">
+    {% block object-tools-items %}
+      {% url opts|admin_urlname:'history' original.pk|admin_urlquote as history_url %}
+      <li><a href="{% add_preserved_filters history_url %}" class="historylink">{% translate "History" %}</a></li>
+      {% if has_absolute_url %}
+        <li><a href="{{ absolute_url }}" class="viewsitelink">{% translate "View on site" %}</a></li>
+      {% endif %}
+    {% endblock %}
+    </ul>
+  {% endif %}{% endif %}
+  {% endblock %}
+  
+  <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}{% if change %}action="{{ adminform.form.action }}" {% endif %}method="post" id="{{ opts.model_name }}_form" novalidate>
+    {% csrf_token %}
+    {% block form_top %}{% endblock %}
+    
+    <div>
+      {% if is_popup %}<input type="hidden" name="_popup" value="1">{% endif %}
+      {% if to_field %}<input type="hidden" name="_to_field" value="{{ to_field }}">{% endif %}
+      {% if save_on_top %}{% block submit_row_top %}{% submit_row %}{% endblock %}{% endif %}
+      
+      {% if errors %}
+          <p class="errornote">
+          {% if errors|length == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
+          </p>
+          {{ adminform.form.non_field_errors }}
+      {% endif %}
+
+      {% block field_sets %}
+        {% for fieldset in adminform %}
+          {% include "admin/includes/fieldset.html" %}
+        {% endfor %}
+      {% endblock %}
+
+      {% block after_field_sets %}{% endblock %}
+
+      {% block inline_field_sets %}
+        {% for inline_admin_formset in inline_admin_formsets %}
+          {% include inline_admin_formset.opts.template %}
+        {% endfor %}
+      {% endblock %}
+
+      {% block after_related_objects %}{% endblock %}
+
+      {% block submit_row_bottom %}{% submit_row %}{% endblock %}
+
+      {% block javascript %}
+          <script type="text/javascript" id="django-admin-form-add-constants"
+                  src="{% static 'admin/js/change_form.js' %}"
+                  {% if opts.actions and change %}data-model-name="{{ opts.model_name }}"{% endif %}
+                  async>
+          </script>
+      {% endblock %}
+
+      {# JavaScript for prepopulated fields #}
+      {% prepopulated_fields_js %}
+
+    </div>
+  </form>
+</div>
+{% endblock %}

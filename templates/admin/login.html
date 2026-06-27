@@ -1,0 +1,196 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    /* Premium Centered Login UI */
+    body.login {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 100vh !important;
+        background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.15), transparent 40%), 
+                    radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent 40%),
+                    #020617 !important;
+        margin: 0 !important;
+        padding: 20px !important;
+        box-sizing: border-box !important;
+    }
+
+    #container {
+        background: transparent !important;
+        border: none !important;
+        width: 100% !important;
+        max-width: 440px !important;
+        margin: 0 auto !important;
+        box-shadow: none !important;
+    }
+
+    #header {
+        display: none !important;
+    }
+
+    #content {
+        padding: 0 !important;
+        background: transparent !important;
+    }
+
+    .login-container {
+        background: rgba(11, 15, 25, 0.65) !important;
+        border: 1px solid rgba(255, 255, 255, 0.06) !important;
+        border-radius: 20px !important;
+        padding: 40px !important;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
+    }
+
+    .login-header {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .login-header .logo {
+        font-size: 2.2rem;
+        margin-bottom: 8px;
+        display: inline-block;
+    }
+
+    .login-header h2 {
+        font-size: 1.6rem;
+        font-weight: 700;
+        margin: 0;
+        background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .login-header p {
+        color: var(--body-quiet-color);
+        font-size: 0.9rem;
+        margin: 6px 0 0 0;
+    }
+
+    /* Form rows styling */
+    .form-row {
+        margin-bottom: 20px !important;
+        padding: 0 !important;
+        border: none !important;
+    }
+
+    .form-row label {
+        display: block !important;
+        margin-bottom: 8px !important;
+        color: var(--body-fg) !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+    }
+
+    .form-row input[type=text], .form-row input[type=password] {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 12px 16px !important;
+        background: rgba(2, 6, 23, 0.8) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 10px !important;
+        font-size: 0.95rem !important;
+        color: #ffffff !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .form-row input[type=text]:focus, .form-row input[type=password]:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25) !important;
+    }
+
+    /* Submit Row styling */
+    .submit-row {
+        background: transparent !important;
+        border: none !important;
+        padding: 10px 0 0 0 !important;
+        margin: 0 !important;
+        text-align: left !important;
+    }
+
+    .submit-row input[type=submit] {
+        width: 100% !important;
+        padding: 12px !important;
+        border-radius: 10px !important;
+        font-size: 1rem !important;
+        font-weight: 600 !important;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .submit-row input[type=submit]:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4) !important;
+    }
+
+    /* Error Handling styling */
+    .errornote {
+        background: rgba(239, 68, 68, 0.1) !important;
+        border: 1px solid rgba(239, 68, 68, 0.2) !important;
+        color: #fca5a5 !important;
+        border-radius: 10px !important;
+        padding: 12px 16px !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 20px !important;
+        list-style: none !important;
+    }
+
+    .errors input {
+        border-color: rgba(239, 68, 68, 0.5) !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-header">
+        <span class="logo">⚡</span>
+        <h2>HAM STUDIO</h2>
+        <p>E-commerce Administration Panel</p>
+    </div>
+
+    {% if form.errors and not form.non_field_errors %}
+    <p class="errornote">
+    {% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
+    </p>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+    <p class="errornote">
+        {{ error }}
+    </p>
+    {% endfor %}
+    {% endif %}
+
+    <form action="{{ app_path }}" method="post" id="login-form">{% csrf_token %}
+        <div class="form-row">
+            {{ form.username.errors }}
+            <label for="id_username" class="required">{{ form.username.label }}:</label>
+            <input type="text" name="username" autofocus required id="id_username" placeholder="Enter username">
+        </div>
+        <div class="form-row">
+            {{ form.password.errors }}
+            <label for="id_password" class="required">{% translate "Password:" %}</label>
+            <input type="password" name="password" required id="id_password" placeholder="••••••••">
+            <input type="hidden" name="next" value="{{ next }}">
+        </div>
+        {% url 'admin_password_reset' as password_reset_url %}
+        {% if password_reset_url %}
+        <div class="password-reset-link" style="text-align: right; margin-top: -10px; margin-bottom: 20px;">
+            <a href="{{ password_reset_url }}" style="font-size: 0.8rem; color: var(--body-quiet-color); text-decoration: none;">{% translate "Forgotten your password or username?" %}</a>
+        </div>
+        {% endif %}
+        <div class="submit-row">
+            <input type="submit" value="{% translate "Log in" %}">
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title }}{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* Design Tokens & Theme Override */
+    :root {
+        --primary: #0f172a;
+        --primary-fg: #f8fafc;
+        --accent: #6366f1;
+        --accent-fg: #ffffff;
+        --body-bg: #020617;
+        --body-fg: #e2e8f0;
+        --body-quiet-color: #94a3b8;
+        --sidebar-bg: #0b0f19;
+        --header-bg: #0b0f19;
+        --header-color: #f8fafc;
+        --header-link-color: #6366f1;
+        --breadcrumbs-bg: #0f172a;
+        --breadcrumbs-link-color: #94a3b8;
+        --breadcrumbs-active-color: #f1f5f9;
+        --link-color: #818cf8;
+        --link-hover-color: #a5b4fc;
+        --link-selected-color: #6366f1;
+        --message-success-bg: rgba(16, 185, 129, 0.15);
+        --message-success-color: #34d399;
+        --message-warning-bg: rgba(245, 158, 11, 0.15);
+        --message-warning-color: #fbbf24;
+        --message-error-bg: rgba(239, 68, 68, 0.15);
+        --message-error-color: #fca5a5;
+        --border-color: #1e293b;
+        --close-button-bg: #334155;
+        --close-button-hover-bg: #475569;
+        --button-bg: #6366f1;
+        --button-hover-bg: #4f46e5;
+        --button-fg: #ffffff;
+    }
+
+    /* Core Reset and Typography */
+    body {
+        font-family: 'Outfit', sans-serif !important;
+        background-color: var(--body-bg) !important;
+        color: var(--body-fg) !important;
+    }
+
+    /* Header & Navbar Restyling */
+    #header {
+        background: rgba(11, 15, 25, 0.8) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding: 15px 30px !important;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    #branding {
+        display: flex;
+        align-items: center;
+    }
+
+    #branding h1 {
+        font-size: 1.5rem !important;
+        font-weight: 700 !important;
+        letter-spacing: -0.025em;
+        margin: 0 !important;
+        background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    #branding h1::before {
+        content: "⚡";
+        font-size: 1.3rem;
+        -webkit-text-fill-color: initial;
+    }
+
+    #user-tools {
+        font-size: 0.9rem !important;
+        color: var(--body-quiet-color) !important;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    #user-tools a {
+        background: rgba(255, 255, 255, 0.05) !important;
+        padding: 6px 12px !important;
+        border-radius: 8px !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        color: var(--body-fg) !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+    }
+
+    #user-tools a:hover {
+        background: rgba(99, 102, 241, 0.2) !important;
+        border-color: rgba(99, 102, 241, 0.4) !important;
+        color: #ffffff !important;
+    }
+
+    /* Breadcrumbs styling */
+    .breadcrumbs {
+        background: #0f172a !important;
+        border-bottom: 1px solid #1e293b !important;
+        padding: 10px 30px !important;
+        font-size: 0.85rem !important;
+        color: var(--body-quiet-color) !important;
+    }
+
+    .breadcrumbs a {
+        color: var(--link-color) !important;
+        text-decoration: none !important;
+        font-weight: 500;
+        transition: color 0.2s ease;
+    }
+
+    .breadcrumbs a:hover {
+        color: var(--link-hover-color) !important;
+    }
+
+    /* Dashboard Modules & Cards */
+    .module {
+        background: #0b0f19 !important;
+        border: 1px solid #1e293b !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+        overflow: hidden !important;
+        margin-bottom: 25px !important;
+    }
+
+    .module caption {
+        background: #0f172a !important;
+        border-bottom: 1px solid #1e293b !important;
+        padding: 14px 20px !important;
+        font-size: 1.05rem !important;
+        font-weight: 600 !important;
+        color: var(--primary-fg) !important;
+        letter-spacing: -0.01em;
+    }
+
+    .module table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+
+    .module th, .module td {
+        padding: 14px 20px !important;
+        border-bottom: 1px solid #1e293b !important;
+    }
+
+    .module tr:last-child td {
+        border-bottom: none !important;
+    }
+
+    /* Buttons restyling */
+    input[type=submit], .button, a.button {
+        background: var(--button-bg) !important;
+        color: var(--button-fg) !important;
+        border: none !important;
+        padding: 10px 20px !important;
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease-in-out !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2), 0 2px 4px -1px rgba(99, 102, 241, 0.1) !important;
+    }
+
+    input[type=submit]:hover, .button:hover, a.button:hover {
+        background: var(--button-hover-bg) !important;
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3), 0 4px 6px -2px rgba(99, 102, 241, 0.15) !important;
+    }
+
+    .button.default, input[type=submit].default {
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+    }
+
+    .button.default:hover, input[type=submit].default:hover {
+        background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%) !important;
+    }
+
+    /* Inputs & Form Fields styling */
+    input[type=text], input[type=password], input[type=email], input[type=number], select, textarea {
+        background: #020617 !important;
+        border: 1px solid #334155 !important;
+        color: var(--body-fg) !important;
+        padding: 10px 14px !important;
+        border-radius: 8px !important;
+        font-family: inherit !important;
+        font-size: 0.95rem !important;
+        transition: border-color 0.2s, box-shadow 0.2s !important;
+    }
+
+    input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, input[type=number]:focus, select:focus, textarea:focus {
+        border-color: var(--accent) !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2) !important;
+        outline: none !important;
+    }
+
+    /* Sidebar Restyling (Django 4+) */
+    #nav-sidebar {
+        background: var(--sidebar-bg) !important;
+        border-right: 1px solid #1e293b !important;
+    }
+
+    #nav-sidebar .app-api, #nav-sidebar .app-auth {
+        background: transparent !important;
+    }
+
+    .sidebar-toggle {
+        background: var(--sidebar-bg) !important;
+        border-right: 1px solid #1e293b !important;
+        color: var(--body-quiet-color) !important;
+    }
+
+    /* Scrollbars customization */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--body-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+    }
+</style>
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">
+    <a href="{% url 'admin:index' %}">
+        <span>HAM STUDIO ADMIN</span>
+    </a>
+</h1>
+{% endblock %}
