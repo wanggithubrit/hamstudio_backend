@@ -79,3 +79,16 @@ class SiteSetting(models.Model):
         if self.image:
             return self.image.url
         return self.value
+
+class SocialFeedItem(models.Model):
+    image = models.FileField(upload_to='social/', blank=True, null=True, help_text="Upload an Instagram/social feed image directly")
+    image_url = models.CharField(max_length=255, blank=True, null=True, help_text="Fallback image path/URL if file is not uploaded")
+    alt_text = models.CharField(max_length=255, default="HAM STUDIO curated sterling silver piece")
+
+    def __str__(self):
+        return f"Social Item {self.id}: {self.alt_text[:30]}"
+
+    def get_image_url(self):
+        if self.image:
+            return self.image.url
+        return self.image_url or ''

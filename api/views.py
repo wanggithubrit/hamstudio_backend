@@ -3,7 +3,7 @@ import random
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from .models import Product, Collection, FaqItem, Order, ContactMessage, SiteSetting
+from .models import Product, Collection, FaqItem, Order, ContactMessage, SiteSetting, SocialFeedItem
 
 # Helper to serialize products
 def serialize_product(product):
@@ -605,3 +605,67 @@ def admin_faq_detail(request, faq_id):
             }})
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+
+
+# ----------------------------------------------------
+# SOCIAL FEED / "AS SEEN ON YOU" ENDPOINTS
+# ----------------------------------------------------
+
+@require_http_methods(["GET"])
+def get_social_feed(request):
+    items = SocialFeedItem.objects.all().order_by('id')
+    data = [{
+        "id": item.id,
+        "image": item.get_image_url(),
+        "altText": item.alt_text
+    } for item in items]
+    return JsonResponse(data, safe=False)
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def admin_social_feed(request):
+    if request.method == "GET":
+        items = SocialFeedItem.objects.all().order_by('id')
+        data = [{
+            "id": item.id,
+            "image": item.get_image_url(),
+            "altText": item.alt_text
+        } for item in items]
+        return JsonResponse(data, safe=False)
+
+    elif request.method == "POST":
+        try:
+            # Handle multipart/form-data for image uploads, fallback to body values
+            alt_text = request.POST.get("altText", "HAM STUDIO curated sterling silver piece")
+            image_url = request.POST.get("image_url", "")
+            image_file = request.FILES.get("image", None)
+
+            # Create item
+            item = SocialFeedItem.objects.create(
+                image=image_file,
+                image_url=image_url if image_url else None,
+                alt_text=alt_text
+            )
+
+            return JsonResponse({
+                "success": True,
+                "item": {
+                    "id": item.id,
+                    "image": item.get_image_url(),
+                    "altText": item.alt_text
+                }
+            })
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def admin_social_feed_detail(request, item_id):
+    try:
+        item = SocialFeedItem.objects.get(id=item_id)
+        item.delete()
+        return JsonResponse({"success": True})
+    except SocialFeedItem.DoesNotExist:
+        return JsonResponse({"error": "Social feed item not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

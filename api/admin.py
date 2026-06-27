@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.admin import AdminSite
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.admin import UserAdmin, GroupAdmin
-from .models import Product, Collection, FaqItem, Order, ContactMessage, SiteSetting
+from .models import Product, Collection, FaqItem, Order, ContactMessage, SiteSetting, SocialFeedItem
 
 class HamAdminSite(AdminSite):
     site_header = "HAM STUDIO Admin Dashboard"
@@ -77,3 +77,8 @@ class ContactMessageAdmin(admin.ModelAdmin):
 class SiteSettingAdmin(admin.ModelAdmin):
     list_display = ('key', 'value', 'description')
     search_fields = ('key', 'description')
+
+@admin.register(SocialFeedItem, site=admin_site)
+class SocialFeedItemAdmin(admin.ModelAdmin):
+    list_display = ('id', 'alt_text', 'image', 'image_url')
+    search_fields = ('alt_text',)

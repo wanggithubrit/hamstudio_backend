@@ -25,4 +25,7 @@ urlpatterns = [
     path("admin/settings/", views.admin_settings, name="admin_settings"),
     path("admin/faqs/", views.admin_faqs, name="admin_faqs"),
     path("admin/faqs/<str:faq_id>/", views.admin_faq_detail, name="admin_faq_detail"),
+    path("social-feed/", views.get_social_feed, name="get_social_feed"),
+    path("admin/social-feed/", views.admin_social_feed, name="admin_social_feed"),
+    path("admin/social-feed/<int:item_id>/", views.admin_social_feed_detail, name="admin_social_feed_detail"),
 ]

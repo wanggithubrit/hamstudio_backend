@@ -11,7 +11,7 @@ class ApiConfig(AppConfig):
             return
 
         try:
-            from .models import Product, Collection, FaqItem, SiteSetting
+            from .models import Product, Collection, FaqItem, SiteSetting, SocialFeedItem
             
             # 1. Seed Collections
             if Collection.objects.count() == 0:
@@ -330,6 +330,29 @@ class ApiConfig(AppConfig):
                         key=item["key"],
                         value=item["value"],
                         description=item["description"]
+                    )
+
+            # 5. Seed SocialFeedItems
+            if SocialFeedItem.objects.count() == 0:
+                print("[SEEDER] Populating database SocialFeedItems...")
+                social_data = [
+                    {
+                        "image_url": "/media__1781974764103.jpg",
+                        "alt_text": "Designer crosses and skulls on white plate"
+                    },
+                    {
+                        "image_url": "/media__1781974705838.jpg",
+                        "alt_text": "Silver rings and bracelets on box"
+                    },
+                    {
+                        "image_url": "/media__1781974705839.jpg",
+                        "alt_text": "Curated cross necklaces hanging"
+                    }
+                ]
+                for item in social_data:
+                    SocialFeedItem.objects.create(
+                        image_url=item["image_url"],
+                        alt_text=item["alt_text"]
                     )
         except Exception as e:
             # Table doesn't exist yet or migrations have not run
